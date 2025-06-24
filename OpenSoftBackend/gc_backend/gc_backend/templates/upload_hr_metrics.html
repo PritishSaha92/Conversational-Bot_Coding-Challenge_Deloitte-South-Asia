@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Data Files Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .upload-form {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .description {
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
+            color: #a94442;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+            display: none;
+        }
+        .file-list {
+            margin-top: 10px;
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .file-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .file-list a {
+            color: #337ab7;
+            text-decoration: none;
+        }
+        .file-list a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>HR Data Files Upload</h1>
+    
+    <p>
+        Upload the required CSV files for HR data. All six files are required.
+        The files will be saved for further processing by your script.
+    </p>
+    
+    <div class="upload-form">
+        <form id="hrMetricsForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="activity_file">Activity Data:</label>
+                <input type="file" id="activity_file" name="activity_file" accept=".csv" required>
+                <div class="description">Employee activity metrics including Teams messages, emails, meetings, and work hours</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="leave_file">Leave Data:</label>
+                <input type="file" id="leave_file" name="leave_file" accept=".csv" required>
+                <div class="description">Employee leave records with leave types, start dates, and durations</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="onboarding_file">Onboarding Data:</label>
+                <input type="file" id="onboarding_file" name="onboarding_file" accept=".csv" required>
+                <div class="description">Employee onboarding information including joining date, feedback, and training status</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="performance_file">Performance Data:</label>
+                <input type="file" id="performance_file" name="performance_file" accept=".csv" required>
+                <div class="description">Employee performance reviews with ratings and promotion considerations</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="rewards_file">Rewards Data:</label>
+                <input type="file" id="rewards_file" name="rewards_file" accept=".csv" required>
+                <div class="description">Employee rewards and recognition records</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="vibemeter_file">Vibemeter Data:</label>
+                <input type="file" id="vibemeter_file" name="vibemeter_file" accept=".csv" required>
+                <div class="description">Employee sentiment and emotional state measures</div>
+            </div>
+            
+            <div class="button-container">
+                <button type="submit">Upload Files</button>
+            </div>
+        </form>
+    </div>
+    
+    <div id="loading" class="loading">
+        <p>Uploading files, please wait...</p>
+    </div>
+    
+    <div id="status" class="status"></div>
+    
+    <div id="result" class="result">
+        <h3>Upload Result</h3>
+        <p id="resultMessage"></p>
+        
+        <h4>Uploaded Files:</h4>
+        <ul id="fileList" class="file-list">
+            <!-- Files will be listed here -->
+        </ul>
+        
+        <p class="description">These files are now available for your script to process.</p>
+    </div>
+    
+    <script>
+        document.getElementById('hrMetricsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+            var loadingDiv = document.getElementById('loading');
+            var statusDiv = document.getElementById('status');
+            var resultDiv = document.getElementById('result');
+            var resultMessage = document.getElementById('resultMessage');
+            var fileList = document.getElementById('fileList');
+            
+            // Show loading and hide status
+            loadingDiv.style.display = 'block';
+            statusDiv.style.display = 'none';
+            resultDiv.style.display = 'none';
+            
+            fetch('http://127.0.0.1:8000/api/process-hr-metrics/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingDiv.style.display = 'none';
+                
+                if (data.success) {
+                    // Clear previous file list
+                    fileList.innerHTML = '';
+                    
+                    // Create list of uploaded files with links
+                    for (const [fileType, fileUrl] of Object.entries(data.file_urls)) {
+                        const li = document.createElement('li');
+                        const link = document.createElement('a');
+                        link.href = fileUrl;
+                        link.textContent = fileType + " - " + fileUrl.split('/').pop();
+                        link.target = '_blank';
+                        li.appendChild(link);
+                        fileList.appendChild(li);
+                    }
+                    
+                    resultMessage.textContent = data.message;
+                    resultDiv.style.display = 'block';
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = 'Error: ' + data.error;
+                    statusDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                loadingDiv.style.display = 'none';
+                statusDiv.className = 'status error';
+                statusDiv.textContent = 'Error: ' + error.message;
+                statusDiv.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html> 

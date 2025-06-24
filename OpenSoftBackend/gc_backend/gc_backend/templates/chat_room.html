@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>HR Assistant Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            flex-grow: 1;
+        }
+        .chatbot-section {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .section-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        #chatbot-log {
+            height: 400px;
+            padding: 10px;
+            margin-bottom: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .message {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-break: break-word;
+        }
+        .message.connect, .message.disconnect {
+            align-self: center;
+            background-color: #f0f0f0;
+            color: #666;
+            font-style: italic;
+            max-width: 100%;
+        }
+        .message.user {
+            align-self: flex-end;
+            background-color: #dcf8c6;
+        }
+        .message.chatbot {
+            align-self: flex-start;
+            background-color: #e3f2fd;
+        }
+        .message-form {
+            display: flex;
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            margin-left: 5px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #disconnect-btn {
+            background: #f44336;
+        }
+        #connection-status {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .connected {
+            color: green;
+        }
+        .disconnected {
+            color: red;
+        }
+        .typing-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #f1f0f0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            align-self: flex-start;
+            font-style: italic;
+            color: #666;
+        }
+        .chat-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .input-container {
+            display: flex;
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>HR Assistant Chatbot</h2>
+    <div id="connection-status" class="disconnected">Status: Disconnected</div>
+    
+    <div class="container">
+        <!-- Chatbot Section -->
+        <div class="chatbot-section">
+            <div class="section-header">HR Assistant Chatbot</div>
+            <div id="chatbot-log"></div>
+            <div id="typing-indicator" class="typing-indicator" style="display: none;">HR Assistant is typing...</div>
+            <div class="chat-controls">
+                <div class="input-container">
+                    <input id="chatbot-message-input" type="text" placeholder="Ask the HR Assistant..."/>
+                    <button id="chatbot-message-submit">Ask</button>
+                </div>
+                <button id="disconnect-btn" title="End this chat session">End Chat</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const roomName = "{{ room_name }}";
+        let chatSocket = null;
+        const connectionStatus = document.getElementById('connection-status');
+        const chatbotLog = document.getElementById('chatbot-log');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        // Chatbot inputs
+        const chatbotInput = document.getElementById('chatbot-message-input');
+        const chatbotSubmit = document.getElementById('chatbot-message-submit');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        
+        // Variables to handle streaming responses
+        let isReceivingStream = false;
+        let currentStreamMessage = null;
+        
+        // Variables to handle chat messages
+        let username = "User_" + Math.floor(Math.random() * 1000); // Default username
+        let connectionSent = false;
+        
+        // Function to connect WebSocket
+        function connectWebSocket() {
+            // Close previous connection if exists
+            if (chatSocket) {
+                chatSocket.close();
+            }
+
+            // Create WebSocket connection
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${window.location.host}/ws/chat/${roomName}/`;
+            chatSocket = new WebSocket(wsUrl);
+
+            // Connection opened event
+            chatSocket.onopen = function(e) {
+                connectionStatus.textContent = 'Status: Connected to WebSocket';
+                connectionStatus.className = 'connected';
+                console.log('WebSocket connection established');
+                
+                // Only send connection event if we haven't sent one yet
+                if (!connectionSent) {
+                    sendConnectionEvent();
+                    connectionSent = true;
+                }
+            };
+
+            // Connection closed event
+            chatSocket.onclose = function(e) {
+                connectionStatus.textContent = 'Status: Disconnected';
+                connectionStatus.className = 'disconnected';
+                addSystemMessage('Disconnected from WebSocket server. Trying to reconnect...', 'disconnect');
+                console.log('WebSocket connection closed');
+                
+                // Reset connection sent flag
+                connectionSent = false;
+                
+                // Hide typing indicator if visible
+                typingIndicator.style.display = 'none';
+                
+                // Try to reconnect after 3 seconds
+                setTimeout(function() {
+                    connectWebSocket();
+                }, 3000);
+            };
+
+            // Connection error event
+            chatSocket.onerror = function(e) {
+                console.error('WebSocket error:', e);
+                addSystemMessage('Error with WebSocket connection', 'disconnect');
+            };
+
+            // Message received event
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                console.log('Message received:', data);
+
+                switch (data.type) {
+                    case 'connection_confirmed':
+                        // Connection confirmed with user information
+                        connectionStatus.textContent = `Status: Connected as ${username}`;
+                        connectionStatus.className = 'connected';
+                        
+                        // Display system message
+                        addSystemMessage('Connected to chat', 'connect');
+                        
+                        // Display previous chat messages if any
+                        if (data.chat_messages && data.chat_messages.length > 0) {
+                            // Clear chat log first
+                            chatbotLog.innerHTML = '';
+                            addSystemMessage('Your conversation history:', 'connect');
+                            
+                            // Display all messages in chronological order
+                            data.chat_messages.forEach(msg => {
+                                const isUser = msg.direction === 'sent';
+                                addChatbotMessage(
+                                    isUser ? 'You' : 'HR Assistant', 
+                                    msg.message, 
+                                    isUser
+                                );
+                            });
+                            
+                            // Add separator after history
+                            addSystemMessage('End of conversation history', 'connect');
+                        }
+                        break;
+                    case 'disconnect_confirmed':
+                        // Disconnect confirmed
+                        addSystemMessage('Chat session ended', 'disconnect');
+                        break;
+                    case 'connect':
+                        // User connected notification
+                        addSystemMessage(data.message, 'connect');
+                        break;
+                    case 'disconnect':
+                        // User disconnected notification
+                        addSystemMessage(data.message, 'disconnect');
+                        break;
+                    case 'error':
+                        // Error message
+                        addSystemMessage('Error: ' + data.message, 'disconnect');
+                        break;
+                    case 'chatbot_response':
+                        // Complete chatbot response
+                        typingIndicator.style.display = 'none';
+                        isReceivingStream = false;
+                        
+                        // If we didn't get any stream chunks, show the full response
+                        if (!currentStreamMessage) {
+                            addChatbotMessage(data.username, data.message);
+                        }
+                        
+                        // Reset the current stream message
+                        currentStreamMessage = null;
+                        break;
+                    case 'chatbot_stream':
+                        // Streaming chunk from chatbot
+                        typingIndicator.style.display = 'none';
+                        
+                        if (!isReceivingStream) {
+                            // First chunk in the stream
+                            isReceivingStream = true;
+                            currentStreamMessage = document.createElement('div');
+                            currentStreamMessage.className = 'message chatbot';
+                            currentStreamMessage.innerHTML = `<strong>${data.username}:</strong> ${data.chunk}`;
+                            chatbotLog.appendChild(currentStreamMessage);
+                        } else {
+                            // Append to existing message
+                            if (currentStreamMessage) {
+                                const content = currentStreamMessage.innerHTML;
+                                currentStreamMessage.innerHTML = content + data.chunk;
+                            }
+                        }
+                        
+                        // Scroll to bottom
+                        chatbotLog.scrollTop = chatbotLog.scrollHeight;
+                        break;
+                }
+            };
+        }
+        
+        // Send connection event to the server
+        function sendConnectionEvent() {
+            if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({
+                    'type': 'connection',
+                    'username': username
+                }));
+                console.log('Connection event sent with username:', username);
+            } else {
+                console.error('WebSocket not open, cannot send connection event');
+            }
+        }
+        
+        // Send disconnect request to the server
+        function sendDisconnectRequest() {
+            if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({
+                    'type': 'disconnect_request'
+                }));
+                console.log('Disconnect request sent');
+            } else {
+                console.error('WebSocket not open, cannot send disconnect request');
+            }
+        }
+
+        // Add system message to chat log
+        function addSystemMessage(message, type = 'connect') {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${type}`;
+            messageElement.textContent = message;
+            chatbotLog.appendChild(messageElement);
+            chatbotLog.scrollTop = chatbotLog.scrollHeight;
+        }
+        
+        // Add message to chatbot log
+        function addChatbotMessage(username, message, isUser = false) {
+            const messageElement = document.createElement('div');
+            messageElement.className = isUser ? 'message user' : 'message chatbot';
+            
+            if (username) {
+                messageElement.innerHTML = `<strong>${username}:</strong> ${message}`;
+            } else {
+                messageElement.textContent = message;
+            }
+            
+            chatbotLog.appendChild(messageElement);
+            chatbotLog.scrollTop = chatbotLog.scrollHeight;
+        }
+        
+        // Send message to chatbot
+        function sendChatbotMessage() {
+            const message = chatbotInput.value.trim();
+            if (message && chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                // Make sure we have a established connection
+                if (!connectionSent) {
+                    addSystemMessage('Please wait for connection to be established...', 'disconnect');
+                    return;
+                }
+                
+                // Add user message to chatbot log
+                addChatbotMessage('You', message, true);
+                
+                // Show typing indicator
+                typingIndicator.style.display = 'inline-block';
+                
+                // Send query to server
+                chatSocket.send(JSON.stringify({
+                    'type': 'chatbot_query',
+                    'message': message
+                }));
+                
+                chatbotInput.value = '';
+            }
+        }
+        
+        // Event listeners for chatbot
+        chatbotSubmit.addEventListener('click', sendChatbotMessage);
+        chatbotInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendChatbotMessage();
+            }
+        });
+        
+        // Event listener for disconnect button
+        disconnectBtn.addEventListener('click', function() {
+            if (connectionSent) {
+                sendDisconnectRequest();
+            } else {
+                addSystemMessage('No active chat session to disconnect', 'disconnect');
+            }
+        });
+
+        // Prompt for username before connecting
+        try {
+            const storedUsername = localStorage.getItem('chatbot_username');
+            if (storedUsername) {
+                username = storedUsername;
+            } else {
+                const promptedName = prompt("Please enter your name:", username);
+                if (promptedName && promptedName.trim() !== '') {
+                    username = promptedName.trim();
+                    localStorage.setItem('chatbot_username', username);
+                }
+            }
+        } catch (e) {
+            console.error('Error accessing localStorage:', e);
+        }
+
+        // Connect on page load
+        connectWebSocket();
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                // Reconnect if socket is closed
+                if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) {
+                    connectWebSocket();
+                }
+            }
+        });
+
+        // Handle before unload to properly close connection
+        window.addEventListener('beforeunload', function() {
+            if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+                // This won't work for immediate closing, but it's a best effort
+                chatSocket.close();
+            }
+        });
+    </script>
+</body>
+</html> 

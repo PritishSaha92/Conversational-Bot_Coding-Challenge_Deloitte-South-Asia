@@ -1,0 +1,55 @@
+.venv
+..venv
+.vscode
+__pycache__
+*.pyc
+.DS_Store
+.env
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+*.egg-info/
+*.egg
+Pipfile.lock
+
+# Django migrations (if you want to exclude them)
+migrations  # Uncomment if you want to ignore migrations
+migrations/__init__.py  # But keep __init__.py
+
+# Database
+*.sqlite3
+*.db
+
+# Media / Uploaded files
+media/
+*.log
+*.pot
+
+# Static files (collected)
+staticfiles/
+static/
+node_modules/
+
+# Local environment settings
+.env
+*.secret
+config/settings/local.py  # If you have environment-specific settings
+
+# IDE and editor files
+.vscode/
+.idea/
+*.iml
+
+# PyTest, Coverage, and Test Logs
+.coverage
+*.cover
+htmlcov/
+pytest_cache/
+
+# Docker
+docker-compose.override.yml
