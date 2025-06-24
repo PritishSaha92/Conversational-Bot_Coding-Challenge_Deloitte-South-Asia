@@ -1,0 +1,142 @@
+{
+    "count": 12,
+    "user": {
+        "id": 36,
+        "username": "EMP0040",
+        "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+    },
+    "messages": [
+        {
+            "id": 83,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "sent",
+            "message": "hello",
+            "timestamp": "2025-04-05T21:03:29.812494Z"
+        },
+        {
+            "id": 84,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "received",
+            "message": "Hi there! I'm here to support you. How are you feeling today?",
+            "timestamp": "2025-04-05T21:03:31.842251Z"
+        },
+        {
+            "id": 85,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "sent",
+            "message": "not that good",
+            "timestamp": "2025-04-05T21:03:36.394561Z"
+        },
+        {
+            "id": 86,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "received",
+            "message": "I'm sorry to hear that you're not feeling your best. Can you tell me more about what's been bothering you lately?",
+            "timestamp": "2025-04-05T21:03:38.043421Z"
+        },
+        {
+            "id": 87,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "sent",
+            "message": "i slept with my boss",
+            "timestamp": "2025-04-05T21:03:44.535616Z"
+        },
+        {
+            "id": 88,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "received",
+            "message": "I see. This is a significant issue that can have serious implications. Before we proceed, I want to ensure that you feel safe and supported. Can you tell me more about the circumstances surrounding this incident? It's important for me to understand the context so I can assist you better.",
+            "timestamp": "2025-04-05T21:03:46.671625Z"
+        },
+        {
+            "id": 89,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "sent",
+            "message": "I am proud of it",
+            "timestamp": "2025-04-05T21:03:53.017517Z"
+        },
+        {
+            "id": 90,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "received",
+            "message": "Thank you for sharing that with me. It's important to address this situation delicately, as it can have professional and personal implications. Given the dynamics at play, I would like to understand your perspective better. How do you think this might be affecting your work environment and your professional relationship with your boss?",
+            "timestamp": "2025-04-05T21:03:55.305538Z"
+        },
+        {
+            "id": 95,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "sent",
+            "message": "hey bot",
+            "timestamp": "2025-04-05T21:54:12.148641Z"
+        },
+        {
+            "id": 96,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "received",
+            "message": "Hello! I'm here to support you. How are you feeling today?",
+            "timestamp": "2025-04-05T21:54:14.171812Z"
+        },
+        {
+            "id": 171,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "sent",
+            "message": "I am depressed",
+            "timestamp": "2025-04-06T15:51:41.090018Z"
+        },
+        {
+            "id": 172,
+            "user": {
+                "id": 36,
+                "username": "EMP0040",
+                "profile_pic": "https://randomuser.me/api/portraits/women/21.jpg"
+            },
+            "direction": "received",
+            "message": "I'm really sorry to hear that you're feeling this way, but I'm here to help. Can you tell me more about what's been making you feel depressed?",
+            "timestamp": "2025-04-06T15:51:43.282669Z"
+        }
+    ]
+}
