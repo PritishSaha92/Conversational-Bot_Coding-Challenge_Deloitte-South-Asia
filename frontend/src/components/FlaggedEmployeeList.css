@@ -1,0 +1,63 @@
+.modal-wrapper {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.1); /* Subtle dimming effect */
+    z-index: 50;
+}
+
+.modal-content {
+    transform: translateY(50px);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    z-index: 1000;
+    position: relative;
+}
+
+.animate-slide-down {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.animate-slide-up {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.blurred {
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+.bg-green-50 {
+    background-color: #f0fdf4;
+}
+
+.text-green-800 {
+    color: #087312;
+}
+
+.text-green-700 {
+    color: #087804;
+}
+
+.bg-green-600 {
+    background-color: #059618;
+}
+
+.bg-green-600:hover {
+    background-color: #0a7804;
+}
+
+button.absolute {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-content .border-b {
+    border-bottom: 1px solid #e5e7eb;
+}

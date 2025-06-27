@@ -1,0 +1,164 @@
+.employee-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg);
+    transition: transform 0.3s, background-color 0.3s;
+    min-height: 380px;
+  }
+  
+  .employee-card:hover {
+    transform: translateY(-5px);
+    background-color: var(--card-hover-bg);
+  }
+  
+  /* Profile Section */
+  .profile-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .profile-pic img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .details {
+    margin-left: 15px;
+    color: var(--text-color);
+  }
+  
+  .details .name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .details .emp-id,
+  .details .department {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  
+  /* Info Cards Grid */
+  .info-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px;
+    background: var(--info-card-bg);
+    color: var(--info-card-text);
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s;
+    padding: 5px;
+    text-align: center;
+  }
+  
+  .card:hover {
+    background: var(--info-card-hover-bg);
+  }
+  
+  /* Additional Info */
+  .additional-info {
+    font-size: 13px;
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  
+  /* Mood Section */
+  .mood-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  
+  .mood-label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text-color);
+  }
+  
+  /* Icons Section */
+  .icons-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  /* Tick/Cross for Reviewed Status */
+  .reviewed-status .tick {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .tick.reviewed {
+    color: #52c41a; /* Green tick for reviewed */
+  }
+  
+  .tick.not-reviewed {
+    color: #f5222d; /* Red cross for not reviewed */
+  }
+  
+  .icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--icon-bg);
+    cursor: pointer;
+    transition: background 0.3s;
+    color: #fff;
+    font-size: 18px;
+  }
+  
+  .icon:hover {
+    background: var(--icon-hover-bg);
+  }
+  
+  /* View Details */
+  .view-details {
+    color: var(--link-color);
+    text-align: right;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .view-details:hover {
+    color: var(--link-hover-color);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .employee-card {
+      padding: 15px;
+    }
+    .details .name {
+      font-size: 16px;
+    }
+    .card {
+      height: 60px;
+      font-size: 12px;
+    }
+  }
+  

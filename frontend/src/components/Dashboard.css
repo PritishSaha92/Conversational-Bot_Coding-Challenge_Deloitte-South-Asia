@@ -1,0 +1,163 @@
+/* Dark Mode Variables (Default) */
+:root {
+  --border-color: #444;
+  --card-bg: #1c1c1c;
+  --card-hover-bg: #2c2c2c;
+  --text-color: #e0e0e0;
+  --text-secondary: #aaa;
+  --info-card-bg: #264653;
+  --info-card-hover-bg: #2a6f70;
+  --info-card-text: #fff;
+  --icon-bg: #2a9d8f;
+  --icon-hover-bg: #21867a;
+  --link-color: #2a9d8f;
+  --link-hover-color: #1e6b5a;
+  --reviewed-color: #52c41a;
+  --main-background-color:#121212;
+}
+
+/* Light Mode Variables */
+.light-theme {
+  --border-color: #ddd;
+  --card-bg: #fff;
+  --card-hover-bg: #f2f2f2;
+  --text-color: #333;
+  --text-secondary: #555;
+  --info-card-bg: #e0f7fa;
+  --info-card-hover-bg: #b2ebf2;
+  --info-card-text: #333;
+  --icon-bg: #2a9d8f;
+  --icon-hover-bg: #21867a;
+  --link-color: #2a9d8f;
+  --link-hover-color: #1e6b5a;
+  --reviewed-color: #52c41a;
+  --main-background-color:#e8e8e8;
+}
+
+/* Dashboard Layout */
+.dashboard {
+  display: flex;
+  height: 100vh;
+  background: var(--card-bg);
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 80px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  transition: width 0.3s;
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.hr-profile img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.sidebar-icon {
+  font-size: 32px;
+  cursor: pointer;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: var(--main-background-color); /* Yeh dark mode ke liye specific hai, agar chahe toh variable se bhi define kar sakte hain */
+  color: var(--text-color);
+  position: relative;
+}
+
+/* Filter Bar */
+.filter-bar {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filter-bar input,
+.filter-bar select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+/* Employee Cards Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.page-btn {
+  padding: 8px 16px;
+  border: none;
+  background: var(--icon-bg);
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.page-btn:hover,
+.page-btn.active {
+  background: var(--icon-hover-bg);
+}
+
+/* Reset Filters Button */
+.reset-btn {
+  padding: 10px 15px;
+  background: var(--icon-bg);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.reset-btn:hover {
+  background: var(--icon-hover-bg);
+}
+
+/* Theme Toggle Button (placed in main-content header) */
+.theme-toggle-btn {
+  position: absolute;
+  top: 80px;
+  right: 30px;
+  background: var(--icon-bg);
+  color: var(--info-card-text);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--icon-hover-bg);
+}
+
